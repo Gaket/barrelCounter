@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="Picker">
-        <attr name="value" format="integer" />
         <attr name="length" format="integer" />
     </declare-styleable>
 </resources>

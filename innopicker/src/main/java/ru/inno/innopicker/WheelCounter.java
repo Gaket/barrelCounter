@@ -28,7 +28,6 @@ public class WheelCounter extends LinearLayout {
     private static String STATE_SUPER_CLASS = "SuperClass";
 
     ExtendedNumberPicker[] numberPickers;
-    private Integer number;
     private int length;
 
 
@@ -78,7 +77,7 @@ public class WheelCounter extends LinearLayout {
     }
 
 
-    public String getValue() {
+    public String getValueString() {
         StringBuilder builder = new StringBuilder();
         for (NumberPicker numberPicker : numberPickers) {
             builder.append(numberPicker.getValue());
@@ -86,26 +85,20 @@ public class WheelCounter extends LinearLayout {
         return builder.toString();
     }
 
-    public int getIntValue() {
-        return Integer.valueOf(getValue());
+    public int getValue() {
+        return Integer.valueOf(getValueString());
     }
+
 
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         this.setOrientation(HORIZONTAL);
-        int length;
-        int number;
 
         TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.Picker, defStyleAttr, 0);
         try {
             if (attrs == null) {
                 length = 1;
-                number = 0;
             } else {
-                number = attributes.getInteger(R.styleable.Picker_value, 0);
                 length = attributes.getInteger(R.styleable.Picker_length, 0);
-                if (length == 0 && number > 0) {
-                    length = String.valueOf(number).length();
-                }
             }
         } finally {
             if (attributes != null) {
@@ -114,8 +107,7 @@ public class WheelCounter extends LinearLayout {
         }
         numberPickers = new ExtendedNumberPicker[length];
 
-
-        String numberString = getStringForNumber(length, number);
+        String numberString = getStringForNumber(length, 0);
 
         for (int i = 0; i < length; i++) {
             ExtendedNumberPicker picker = new ExtendedNumberPicker(context);
@@ -145,7 +137,7 @@ public class WheelCounter extends LinearLayout {
     protected Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
         bundle.putParcelable(STATE_SUPER_CLASS, super.onSaveInstanceState());
-        bundle.putString(STATE_SELECTED_VALUE, getValue());
+        bundle.putString(STATE_SELECTED_VALUE, getValueString());
         return bundle;
     }
 
@@ -165,5 +157,8 @@ public class WheelCounter extends LinearLayout {
         }
     }
 
-
+    public void setNumber(Integer number) {
+        String numberString = getStringForNumber(length, number);
+        setPickersValues(numberString);
+    }
 }

@@ -13,8 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
-        app:length="4"
-        app:value="4155"
+        app:length="6"
         />
 
     <Button
@@ -28,5 +27,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/decrement"/>
+
+    <Button
+        android:id="@+id/random_value_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/random_value"/>
+
+    <EditText
+        android:id="@+id/number_input_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:imeOptions="actionDone"/>
 
 </LinearLayout>
