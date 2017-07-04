@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">NumberPicker</string>
+    <string name="increment">Increment</string>
+    <string name="decrement">Decrement</string>
 </resources>

@@ -14,7 +14,7 @@ import android.widget.NumberPicker;
  * @author Artur Badretdinov (Gaket)
  *         20.12.2016.
  */
-public class Digits extends LinearLayout {
+public class WheelCounter extends LinearLayout {
 
     /**
      * Identifier for the state to save the selected index of
@@ -27,22 +27,55 @@ public class Digits extends LinearLayout {
      */
     private static String STATE_SUPER_CLASS = "SuperClass";
 
-    NumberPicker[] numberPickers;
+    ExtendedNumberPicker[] numberPickers;
+    private Integer number;
+    private int length;
 
 
-    public Digits(Context context) {
+    public WheelCounter(Context context) {
         this(context, null);
     }
 
-    public Digits(Context context, @Nullable AttributeSet attrs) {
+    public WheelCounter(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public Digits(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public WheelCounter(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr);
     }
 
+    public void increment() {
+        int cursor = numberPickers.length - 1;
+        increment(cursor);
+    }
+
+    private void increment(int position) {
+        if (position < 0) {
+            return;
+        }
+        int curValue = numberPickers[position].getValue();
+        if (curValue == 9) {
+            increment(position - 1);
+        }
+        numberPickers[position].increment();
+    }
+
+    public void decrement() {
+        int cursor = numberPickers.length - 1;
+        decrement(cursor);
+    }
+
+    private void decrement(int position) {
+        if (position < 0) {
+            return;
+        }
+        int curValue = numberPickers[position].getValue();
+        if (curValue == 0) {
+            decrement(position - 1);
+        }
+        numberPickers[position].decrement();
+    }
 
 
     public String getValue() {
@@ -79,13 +112,13 @@ public class Digits extends LinearLayout {
                 attributes.recycle();
             }
         }
-        numberPickers = new NumberPicker[length];
+        numberPickers = new ExtendedNumberPicker[length];
 
 
         String numberString = getStringForNumber(length, number);
 
         for (int i = 0; i < length; i++) {
-            NumberPicker picker = new NumberPicker(context);
+            ExtendedNumberPicker picker = new ExtendedNumberPicker(context);
             picker.setMinValue(0);
             picker.setMaxValue(9);
             picker.setValue(Character.getNumericValue(numberString.charAt(i)));
@@ -97,16 +130,15 @@ public class Digits extends LinearLayout {
 
     @NonNull
     private String getStringForNumber(int length, int number) {
+        StringBuilder builder = new StringBuilder();
         String numberString = String.valueOf(number);
         if (numberString.length() < length) {
-            StringBuilder builder = new StringBuilder();
             for (int i = 0; i < length - numberString.length(); i++) {
                 builder.append("0");
             }
-            builder.append(numberString);
-            numberString = builder.toString();
         }
-        return numberString;
+        builder.append(numberString);
+        return builder.toString();
     }
 
     @Override
