@@ -2,6 +2,7 @@ package ru.inno.numberpicker;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,11 +23,14 @@ public class MainActivity extends AppCompatActivity {
         final WheelCounter counterView = (WheelCounter) findViewById(R.id.numberPicker1);
 
         final EditText numberInput = (EditText) findViewById(R.id.number_input_view);
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(counterView.getLength()); //Filter to 10 characters
+        numberInput .setFilters(filters);
         numberInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    counterView.setNumber(Integer.valueOf(numberInput.getText().toString()));
+                    counterView.setValue(Integer.valueOf(numberInput.getText().toString()));
                 }
                 return false;
             }
@@ -48,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Random r = new Random();
-                int lenght = counterView.getValueString().length();
-                int randValue = r.nextInt((int)Math.round(Math.pow(10, lenght)));
-                counterView.setNumber(randValue);
+                int length = counterView.getValueString().length();
+                int randValue = r.nextInt((int)Math.round(Math.pow(10, length)));
+                counterView.setValue(randValue);
             }
         });
     }

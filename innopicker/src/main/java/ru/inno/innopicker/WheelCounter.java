@@ -3,6 +3,7 @@ package ru.inno.innopicker;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.NumberPicker;
  */
 public class WheelCounter extends LinearLayout {
 
+    public static final int SCROLL_DELAY_MS = 150;
     /**
      * Identifier for the state to save the selected index of
      * the side spinner.
@@ -27,6 +29,7 @@ public class WheelCounter extends LinearLayout {
      */
     private static String STATE_SUPER_CLASS = "SuperClass";
 
+    Handler handler;
     ExtendedNumberPicker[] numberPickers;
     private int length;
 
@@ -76,6 +79,37 @@ public class WheelCounter extends LinearLayout {
         numberPickers[position].decrement();
     }
 
+    public void setValue(Integer number) {
+        String numberString = getStringForNumber(length, number);
+        String currentNumberString = getValueString();
+
+        int[] diff = calculateDiff(numberString, currentNumberString);
+        for (int i = 0; i < numberPickers.length; i++) {
+            update(numberPickers[i], diff[i]);
+        }
+    }
+
+    private void update(ExtendedNumberPicker numberPicker, int times) {
+        Runnable runnable = times > 0 ? new IncrementDigit(numberPicker) : new DecrementDigit(numberPicker);
+        times = Math.abs(times);
+        for (int i = 0; i < times; i++) {
+            handler.postDelayed(runnable, SCROLL_DELAY_MS * i);
+        }
+    }
+
+    private int[] calculateDiff(String numberString, String currentNumberString) {
+        int[] diffs = new int[currentNumberString.length()];
+        for (int i = currentNumberString.length() - 1; i >= 0; i--) {
+            diffs[i] = calculateDiff(numberString.charAt(i), currentNumberString.charAt(i));
+        }
+        return diffs;
+    }
+
+    private int calculateDiff(char goalDigit, char curDigit) {
+        int goal = Character.getNumericValue(goalDigit);
+        int cur = Character.getNumericValue(curDigit);
+        return (goal - cur) % 10;
+    }
 
     public String getValueString() {
         StringBuilder builder = new StringBuilder();
@@ -89,9 +123,14 @@ public class WheelCounter extends LinearLayout {
         return Integer.valueOf(getValueString());
     }
 
+    public int getLength() {
+        return length;
+    }
 
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         this.setOrientation(HORIZONTAL);
+
+        handler = new Handler();
 
         TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.Picker, defStyleAttr, 0);
         try {
@@ -99,6 +138,9 @@ public class WheelCounter extends LinearLayout {
                 length = 1;
             } else {
                 length = attributes.getInteger(R.styleable.Picker_length, 0);
+                if (length > 6) {
+                    throw new IllegalArgumentException("Only 6 digits work well on 360dp device in current implementation. You should update this widget if you want to use more");
+                }
             }
         } finally {
             if (attributes != null) {
@@ -157,8 +199,30 @@ public class WheelCounter extends LinearLayout {
         }
     }
 
-    public void setNumber(Integer number) {
-        String numberString = getStringForNumber(length, number);
-        setPickersValues(numberString);
+    private static class IncrementDigit implements Runnable {
+
+        private final ExtendedNumberPicker picker;
+
+        IncrementDigit(ExtendedNumberPicker picker) {
+            this.picker = picker;
+        }
+
+        @Override
+        public void run() {
+            picker.increment();
+        }
+    }
+
+    private class DecrementDigit implements Runnable {
+        private final ExtendedNumberPicker picker;
+
+        DecrementDigit(ExtendedNumberPicker picker) {
+            this.picker = picker;
+        }
+
+        @Override
+        public void run() {
+            picker.decrement();
+        }
     }
 }
