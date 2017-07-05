@@ -105,7 +105,7 @@ public class ExtendedNumberPicker extends NumberPicker {
 
     /**
      * Set text size in pixels
-     *
+     * <p>
      * Using reflection to change the value because
      * there is no such setter in NumberPicker
      *

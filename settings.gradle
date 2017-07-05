@@ -1,1 +1,1 @@
-include ':app', ':barrelcounter'
+include ':sample', ':barrelcounter'
