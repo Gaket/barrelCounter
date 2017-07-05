@@ -2,5 +2,6 @@
 <resources>
     <declare-styleable name="Picker">
         <attr name="length" format="integer" />
+        <attr name="textSize" format="dimension" />
     </declare-styleable>
 </resources>
