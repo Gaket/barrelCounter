@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context="ru.inno.numberpicker.MainActivity">
+
+        <ru.inno.innopicker.BarrelCounter
+            android:id="@+id/numberPicker1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_centerHorizontal="true"
+            app:length="5" />
+
+        <Button
+            android:id="@+id/increment_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/numberPicker1"
+            android:text="@string/increment" />
+
+        <Button
+            android:id="@+id/start_increment_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/increment_view"
+            android:layout_alignParentRight="true"
+            android:text="@string/start_increment" />
+
+        <Button
+            android:id="@+id/decrement_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/increment_view"
+            android:text="@string/decrement" />
+
+        <Button
+            android:id="@+id/start_decrement_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/decrement_view"
+            android:layout_alignParentRight="true"
+            android:text="@string/start_decrement" />
+
+        <Button
+            android:id="@+id/stop_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/start_decrement_view"
+            android:text="@string/stop_counter" />
+
+        <Button
+            android:id="@+id/random_value_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/stop_counter"
+            android:layout_marginTop="16dp"
+            android:text="@string/random_value" />
+
+        <EditText
+            android:id="@+id/number_input_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/random_value_view"
+            android:layout_toLeftOf="@+id/set_number_view"
+            android:layout_toRightOf="@id/random_value_view"
+            android:hint="@string/type_value_here"
+            android:imeOptions="actionDone"
+            android:inputType="number" />
+
+        <Button
+            android:id="@id/set_number_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/random_value_view"
+            android:layout_alignParentRight="true"
+            android:text="@string/set_value" />
+
+
+    </RelativeLayout>
+
+</ScrollView>
