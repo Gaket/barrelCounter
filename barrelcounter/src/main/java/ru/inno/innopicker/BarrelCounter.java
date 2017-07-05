@@ -11,29 +11,27 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
+import ru.inno.innopicker.transitions.ShortestPathStrategy;
+
 /**
  * @author Artur Badretdinov (Gaket)
  *         20.12.2016.
  */
 public class BarrelCounter extends LinearLayout {
 
+    // Default view parameters
     private static final int DEFAULT_FONT_SIZE_SP = 14;
-    private static final int DEFAULT_LENGTH = 1;
+    private static final int DEFAULT_LENGTH = 2;
     private static final int MAX_LENGTH = 6;
 
-    /**
-     * Identifier for the state to save the selected index of
-     * the side spinner.
-     */
+    // Keys for state restoring
     private static String STATE_SELECTED_VALUE = "SelectedNumber";
-
-    /**
-     * Identifier for the state of the super class.
-     */
     private static String STATE_SUPER_CLASS = "SuperClass";
 
     private ExtendedNumberPicker[] numberPickers;
     private int length;
+    private AnimationStrategy animationStrategy;
+    public static final int DIGIT_MARGINS = 1;
 
     public BarrelCounter(Context context) {
         this(context, null);
@@ -93,12 +91,9 @@ public class BarrelCounter extends LinearLayout {
         String currentNumberString = getValueString();
 
         int[] diff = calculateDiff(numberString, currentNumberString);
-        for (int i = 0; i < numberPickers.length; i++) {
-
-            // This is a point for extension, we can add different transition strategies here
-            // for example, increment all, decrement all, or use current (bidirectional) algorithm
-            update(numberPickers[i], diff[i]);
-        }
+        // Here we could decide at runtime what particular strategy to use,
+        // depending on parameter from Builder, for example
+        animationStrategy.execute(diff, numberPickers);
     }
 
     /**
@@ -161,6 +156,10 @@ public class BarrelCounter extends LinearLayout {
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         this.setOrientation(HORIZONTAL);
 
+        // This could be set depending on some view attribute, but here is a concrete example
+        animationStrategy = new ShortestPathStrategy();
+        animationStrategy.setPicker(this);
+
         TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.Picker, defStyleAttr, 0);
         int textSize = InterfaceUtils.spToPx(getContext(), DEFAULT_FONT_SIZE_SP);
         length = DEFAULT_LENGTH;
@@ -197,18 +196,10 @@ public class BarrelCounter extends LinearLayout {
         picker.setWrapSelectorWheel(true);
         picker.setBackgroundResource(R.drawable.bg_number_picker);
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(1, 0, 1, 0);
+        params.setMargins(DIGIT_MARGINS, 0, DIGIT_MARGINS, 0);
         picker.setLayoutParams(params);
         picker.setTextSize(textSize);
         return picker;
-    }
-
-    private void update(ExtendedNumberPicker numberPicker, int times) {
-        if (times > 0) {
-            numberPicker.increment(times);
-        } else {
-            numberPicker.decrement(Math.abs(times));
-        }
     }
 
     private int[] calculateDiff(String numberString, String currentNumberString) {

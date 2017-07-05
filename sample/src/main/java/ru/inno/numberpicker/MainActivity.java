@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        counterView = (BarrelCounter) findViewById(R.id.numberPicker1);
+        counterView = (BarrelCounter) findViewById(R.id.number_counter_view);
         initViews(counterView);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_ACTIVE_COUNTER)) {
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.stop_counter).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.stop_counter_view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cancelTimer();
