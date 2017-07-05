@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -17,6 +16,10 @@ import android.widget.NumberPicker;
  *         20.12.2016.
  */
 public class BarrelCounter extends LinearLayout {
+
+    private static final int DEFAULT_FONT_SIZE_SP = 14;
+    private static final int DEFAULT_LENGTH = 1;
+    private static final int MAX_LENGTH = 6;
 
     /**
      * Identifier for the state to save the selected index of
@@ -29,25 +32,21 @@ public class BarrelCounter extends LinearLayout {
      */
     private static String STATE_SUPER_CLASS = "SuperClass";
 
-    ExtendedNumberPicker[] numberPickers;
+    private ExtendedNumberPicker[] numberPickers;
     private int length;
-
 
     public BarrelCounter(Context context) {
         this(context, null);
     }
 
-
     public BarrelCounter(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
-
 
     public BarrelCounter(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr);
     }
-
 
     @Override
     protected Parcelable onSaveInstanceState() {
@@ -57,17 +56,16 @@ public class BarrelCounter extends LinearLayout {
         return bundle;
     }
 
-
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
             super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER_CLASS));
             setPickersValuesSilently(bundle.getString(STATE_SELECTED_VALUE));
-        } else
+        } else {
             super.onRestoreInstanceState(state);
+        }
     }
-
 
     /**
      * Increment the number in widget
@@ -77,7 +75,6 @@ public class BarrelCounter extends LinearLayout {
         increment(cursor);
     }
 
-
     /**
      * Decrement the number in widget
      */
@@ -85,7 +82,6 @@ public class BarrelCounter extends LinearLayout {
         int cursor = numberPickers.length - 1;
         decrement(cursor);
     }
-
 
     /**
      * Set new value with animations
@@ -115,7 +111,6 @@ public class BarrelCounter extends LinearLayout {
         setValue(num);
     }
 
-
     /**
      * @return current value with leading zeros, if they exist
      */
@@ -127,7 +122,6 @@ public class BarrelCounter extends LinearLayout {
         return builder.toString();
     }
 
-
     /**
      * @return current value
      */
@@ -135,14 +129,12 @@ public class BarrelCounter extends LinearLayout {
         return Integer.valueOf(getValueString());
     }
 
-
     /**
      * @return total number of digits
      */
     public int getLength() {
         return length;
     }
-
 
     private void increment(int position) {
         if (position < 0) {
@@ -155,7 +147,6 @@ public class BarrelCounter extends LinearLayout {
         numberPickers[position].increment();
     }
 
-
     private void decrement(int position) {
         if (position < 0) {
             return;
@@ -167,19 +158,18 @@ public class BarrelCounter extends LinearLayout {
         numberPickers[position].decrement();
     }
 
-
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         this.setOrientation(HORIZONTAL);
 
         TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.Picker, defStyleAttr, 0);
-        int textSize = spToPx(14);
-        length = 1;
+        int textSize = InterfaceUtils.spToPx(getContext(), DEFAULT_FONT_SIZE_SP);
+        length = DEFAULT_LENGTH;
         try {
             if (attrs != null) {
-                length = attributes.getInteger(R.styleable.Picker_length, 1);
-                textSize = attributes.getDimensionPixelSize(R.styleable.Picker_textSize, spToPx(14));
-                if (length > 6) {
-                    throw new IllegalArgumentException("Only 6 digits work well on 360dp device in current implementation. You should update this widget if you want to use more");
+                length = attributes.getInteger(R.styleable.Picker_length, DEFAULT_LENGTH);
+                textSize = attributes.getDimensionPixelSize(R.styleable.Picker_textSize, InterfaceUtils.spToPx(getContext(), DEFAULT_FONT_SIZE_SP));
+                if (length > MAX_LENGTH) {
+                    throw new IllegalArgumentException("Only " + MAX_LENGTH + " digits work well on 360dp device in current implementation. You should update this widget if you want to use more");
                 }
             }
         } finally {
@@ -198,7 +188,6 @@ public class BarrelCounter extends LinearLayout {
         }
     }
 
-
     @NonNull
     private ExtendedNumberPicker createSinglePicker(Context context, int textSize, String numberString, int i) {
         ExtendedNumberPicker picker = new ExtendedNumberPicker(context);
@@ -214,7 +203,6 @@ public class BarrelCounter extends LinearLayout {
         return picker;
     }
 
-
     private void update(ExtendedNumberPicker numberPicker, int times) {
         if (times > 0) {
             numberPicker.increment(times);
@@ -222,7 +210,6 @@ public class BarrelCounter extends LinearLayout {
             numberPicker.decrement(Math.abs(times));
         }
     }
-
 
     private int[] calculateDiff(String numberString, String currentNumberString) {
         int[] diffs = new int[currentNumberString.length()];
@@ -232,19 +219,11 @@ public class BarrelCounter extends LinearLayout {
         return diffs;
     }
 
-
     private int calculateDiff(char goalDigit, char curDigit) {
         int goal = Character.getNumericValue(goalDigit);
         int cur = Character.getNumericValue(curDigit);
         return (goal - cur) % 10;
     }
-
-
-    private int spToPx(int sp) {
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP, sp, getContext().getResources().getDisplayMetrics());
-    }
-
 
     @NonNull
     private String getStringForNumber(int length, int number) {
@@ -258,7 +237,6 @@ public class BarrelCounter extends LinearLayout {
         builder.append(numberString);
         return builder.toString();
     }
-
 
     private void setPickersValuesSilently(String value) {
         for (int i = 0; i < numberPickers.length; i++) {

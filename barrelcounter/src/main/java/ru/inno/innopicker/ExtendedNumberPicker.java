@@ -37,6 +37,12 @@ public class ExtendedNumberPicker extends NumberPicker {
         super(context, attrs, defStyleAttr);
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        handler.removeCallbacks(null);
+    }
+
     /**
      * Increment value showing animation
      */
@@ -64,7 +70,6 @@ public class ExtendedNumberPicker extends NumberPicker {
         changeValueByOne(false);
     }
 
-
     /**
      * Decrement value showing animation several times
      *
@@ -91,8 +96,6 @@ public class ExtendedNumberPicker extends NumberPicker {
 
         Method method;
         try {
-            // refelction call for
-            // higherPicker.changeValueByOne(true);
             method = this.getClass().getSuperclass().getDeclaredMethod("changeValueByOne", boolean.class);
             method.setAccessible(true);
             method.invoke(this, increment);

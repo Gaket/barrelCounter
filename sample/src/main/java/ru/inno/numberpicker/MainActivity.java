@@ -20,23 +20,19 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_ACTIVE_COUNTER = "active counter";
     private Timer timer;
     private ActiveCounter activeCounter = ActiveCounter.NONE;
+    private BarrelCounter counterView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final BarrelCounter counterView = (BarrelCounter) findViewById(R.id.numberPicker1);
-
+        counterView = (BarrelCounter) findViewById(R.id.numberPicker1);
         initViews(counterView);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_ACTIVE_COUNTER)) {
             activeCounter = (ActiveCounter) savedInstanceState.getSerializable(KEY_ACTIVE_COUNTER);
-            if (activeCounter == ActiveCounter.UP) {
-                scheduleIncrementTask(counterView);
-            } else if (activeCounter == ActiveCounter.DOWN) {
-                scheduleDecrementTask(counterView);
-            }
+            startCounterIfNeeded();
         }
     }
 
@@ -44,6 +40,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_ACTIVE_COUNTER, activeCounter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startCounterIfNeeded();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cancelTimer();
     }
 
     private void initViews(final BarrelCounter counterView) {
@@ -133,6 +141,14 @@ public class MainActivity extends AppCompatActivity {
             timer.cancel();
         }
         timer = new Timer();
+    }
+
+    private void startCounterIfNeeded() {
+        if (activeCounter == ActiveCounter.UP) {
+            scheduleIncrementTask(counterView);
+        } else if (activeCounter == ActiveCounter.DOWN) {
+            scheduleDecrementTask(counterView);
+        }
     }
 
     private class IncrementTask extends TimerTask {
